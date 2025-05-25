@@ -7,5 +7,40 @@
   <body>
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
+    <p id="receive_payload"></p>
   </body>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket1 = io();
+    const socket = io('/dashboard', {
+        auth: {
+            token: 'IlhamRidhoGanteng',
+        }
+    });
+    
+    // You can add your socket event listeners here
+    socket.on('connect', () => {
+      console.log('Connected to server');
+    });
+    socket.emit('send_payload', {
+      error: false,
+      message: 'Hello from client',
+      data: {
+        name: 'Ilham Ridho',
+        age: 23,
+        address: 'Jakarta',
+      },
+    });
+    socket.on('payload_received', (payload) => {
+      console.log('Received payload:', payload);
+      const receivePayload = document.getElementById('receive_payload');
+      receivePayload.innerHTML = JSON.stringify(payload);
+    });
+    socket.on('disconnect', () => {
+      console.log('Disconnected from server');
+    });
+    socket.on('message', (message) => {
+      console.log('New message:', message);
+    });
+  </script>
 </html>
